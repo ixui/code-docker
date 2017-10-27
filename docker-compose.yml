@@ -1,6 +1,7 @@
-version: "2"
+version: "3"
 services:
   gitlab-mysql:
+    container_name: gitlab-mysql
     restart: always
     image: sameersbn/mysql:latest
     environment:
@@ -10,6 +11,7 @@ services:
     volumes:
       - ./volumes/gitlab/mysql:/var/lib/mysql
   gitlab:
+    container_name: gitlab
     restart: always
     image: sameersbn/gitlab:latest
     environment:
@@ -51,11 +53,13 @@ services:
     volumes:
       - ./volumes/gitlab/gitlab:/home/git/data
   gitlab-redis:
+    container_name: gitlab-redis
     restart: always
     image: sameersbn/redis:latest
     volumes:
       - ./volumes/gitlab/redis:/var/lib/redis
   redmine-mysql:
+    container_name: redmine-mysql
     restart: always
     image: sameersbn/mysql:latest
     environment:
@@ -65,6 +69,7 @@ services:
     volumes:
       - ./volumes/redmine/mysql:/var/lib/mysql
   redmine:
+    container_name: redmine
     restart: always
     image: sameersbn/redmine:latest
     environment:
@@ -101,10 +106,16 @@ services:
       - IMAP_INTERVAL=30
     volumes:
       - ./volumes/redmine/redmine:/home/redmine/data
-  proxy:
-    build: proxy
-    links:
-      - gitlab:gitlab
-      - redmine:redmine
+  nginx:
+    image: nginx
     ports:
-      - "80:80"
+     - "80:80"
+    volumes:
+      - ./volumes/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - redmine
+      - gitlab
+    networks:
+     - my_network
+networks:
+  my_network:
