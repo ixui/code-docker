@@ -21,6 +21,8 @@ services:
   gitlab:
     restart: always
     image: sameersbn/gitlab:10.1.0
+    ports:
+      - 10080:80
     depends_on:
       - gitlab-redis
       - gitlab-postgresql
@@ -45,10 +47,10 @@ services:
       - GITLAB_HTTPS=false
       - SSL_SELF_SIGNED=false
 
-      - GITLAB_HOST=localhost
+      - GITLAB_HOST=
       - GITLAB_PORT=10080
-      - GITLAB_SSH_PORT=10022
-      - GITLAB_RELATIVE_URL_ROOT=/gitlab
+      - GITLAB_SSH_PORT=
+      - GITLAB_RELATIVE_URL_ROOT=
       - GITLAB_SECRETS_DB_KEY_BASE=long-and-random-alphanumeric-string
       - GITLAB_SECRETS_SECRET_KEY_BASE=long-and-random-alphanumeric-string
       - GITLAB_SECRETS_OTP_KEY_BASE=long-and-random-alphanumeric-string
@@ -143,7 +145,7 @@ services:
       - OAUTH_AZURE_API_KEY=
       - OAUTH_AZURE_API_SECRET=
       - OAUTH_AZURE_TENANT_ID=
-    
+
   redmine-postgresql:
     image: sameersbn/postgresql:9.6-2
     environment:
@@ -156,11 +158,13 @@ services:
 
   redmine:
     image: sameersbn/redmine:3.4.2
+    ports:
+      - 10081:80
     depends_on:
       - redmine-postgresql
     restart: always
     environment:
-      - TZ=Asia/Tokyo 
+      - TZ=Asia/Tokyo
 
       - DB_ADAPTER=postgresql
       - DB_HOST=redmine-postgresql
@@ -170,8 +174,8 @@ services:
       - DB_NAME=redmine_production
 
       - REDMINE_PORT=10081
-      - REDMINE_HTTPS=false 
-      - REDMINE_RELATIVE_URL_ROOT=/redmine
+      - REDMINE_HTTPS=false
+      - REDMINE_RELATIVE_URL_ROOT=
       - REDMINE_SECRET_TOKEN=
 
       - REDMINE_SUDO_MODE_ENABLED=false
@@ -186,8 +190,8 @@ services:
       - SMTP_ENABLED=true
       - SMTP_METHOD=smtp
       - SMTP_DOMAIN=
-      - SMTP_HOST= 
-      - SMTP_PORT=25 
+      - SMTP_HOST=
+      - SMTP_PORT=25
       - SMTP_USER=
       - SMTP_PASS=
       - SMTP_STARTTLS=false
@@ -203,12 +207,3 @@ services:
 
     volumes:
       - ./volumes/redmine/redmine:/home/redmine/data
-  nginx:
-    image: nginx
-    ports:
-     - "80:80"
-    volumes:
-      - ./volumes/nginx/conf.d:/etc/nginx/conf.d
-    depends_on:
-      - redmine
-      - gitlab
