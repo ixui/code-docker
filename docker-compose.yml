@@ -24,9 +24,6 @@ services:
     depends_on:
       - gitlab-redis
       - gitlab-postgresql
-    ports:
-      - "10080:80"
-      - "10022:22"
     volumes:
       - ./volumes/gitlab/gitlab:/home/git/data:Z
     environment:
@@ -172,7 +169,7 @@ services:
       - DB_PASS=password
       - DB_NAME=redmine_production
 
-      - REDMINE_PORT=10080
+      - REDMINE_PORT=10081
       - REDMINE_HTTPS=false 
       - REDMINE_RELATIVE_URL_ROOT=/redmine
       - REDMINE_SECRET_TOKEN=
@@ -204,8 +201,6 @@ services:
       - IMAP_SSL=true
       - IMAP_INTERVAL=30
 
-    ports:
-      - "10080:80"
     volumes:
       - ./volumes/redmine/redmine:/home/redmine/data
   nginx:
